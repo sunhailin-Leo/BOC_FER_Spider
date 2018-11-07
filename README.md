@@ -22,6 +22,7 @@
 
 * 项目简介:
     1. 获取中国银行外汇牌价的汇率(本项目模板以港币为Base)
+        * 爬虫地址：[网址](http://srh.bankofchina.com/search/whpj/search.jsp)
     2. 获取时间可以自定义(设置起始时间不建议跨度太长)
 
 * 启动简介
