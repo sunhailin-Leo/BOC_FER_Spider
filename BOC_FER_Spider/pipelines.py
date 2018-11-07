@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import copy
 import pymysql
 from twisted.enterprise import adbapi
 from pymysql import cursors
@@ -40,7 +40,9 @@ class BocFerSpiderPipeline(object):
 
     # pipeline默认调用
     def process_item(self, item, spider):
-        query = self.db_pool.runInteraction(self._conditional_insert, item)  # 调用插入的方法
+        # 对象拷贝，深拷贝
+        async_item = copy.deepcopy(item)
+        query = self.db_pool.runInteraction(self._conditional_insert, async_item)  # 调用插入的方法
         query.addErrback(self._handle_error, item, spider)  # 调用异常处理方法
         return item
 
