@@ -11,16 +11,18 @@ from collections import OrderedDict
 import scrapy
 
 # 项目内部库
-from BOC_FER_Spider.utils.enum_variable import URL
-from BOC_FER_Spider.utils.currency_mapper import CURRENCY_MAP
 from BOC_FER_Spider.utils.get_total_page import get_total_page
+from BOC_FER_Spider.utils.enum_variable import URL, CURRENCY_MAP
 
 
 class BOCFERScrapySpider(scrapy.Spider):
 
     name = "BOC"
 
-    def __init__(self, start_time: str, end_time: str, currency_name: str):
+    def __init__(self,
+                 start_time: str,
+                 end_time: str,
+                 currency_name: str):
         """
         中国银行外汇牌价查询爬虫
         :param start_time: 起始时间

@@ -18,8 +18,16 @@ MYSQL_PORT = 3306
 MYSQL_USER = "root"
 MYSQL_PWD = ""
 MYSQL_DB_NAME = "exchange_rate"
+MYSQL_TABLE_NAME = "t_exchange_rate_1"
 MYSQL_CHARSET = "utf8"
 
+# MONGODB配置
+MONGODB_HOST = "127.0.0.1"
+MONGODB_PORT = 27017
+MONGODB_USER = ""
+MONGODB_PASS = ""
+MONGODB_DB_NAME = "db_exchange_rate"
+MONGODB_COL_NAME = "t_rate"
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS = 32
@@ -66,10 +74,10 @@ DEFAULT_REQUEST_HEADERS = {
 #    'scrapy.extensions.telnet.TelnetConsole': None,
 # }
 
-# Configure item pipelines
-# See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+# 配置ITEM PIPELINES
 ITEM_PIPELINES = {
-   'BOC_FER_Spider.pipelines.BocFerSpiderPipeline': 1,
+    'BOC_FER_Spider.pipelines.BocFerSpiderMySQLPipeline': 1,
+    # 'BOC_FER_Spider.pipelines.BocFerSpiderMongoDBPipeline': 1
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

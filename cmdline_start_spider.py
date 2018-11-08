@@ -7,16 +7,19 @@ Created on 2018年11月7日
 import os
 import sys
 import getopt
+import pymysql
 from typing import List, Tuple
 
 # Python第三方库
 # 通过调用命令行进行调试
 # 调用execute这个函数可调用scrapy脚本
 from scrapy.cmdline import execute
+from scrapy.utils.project import get_project_settings
 
 # 项目内部库
-from BOC_FER_Spider.utils.currency_mapper import CURRENCY_MAP
+from BOC_FER_Spider.settings import ITEM_PIPELINES
 from BOC_FER_Spider.utils.common_utils import time_format_validate
+from BOC_FER_Spider.utils.enum_variable import CREATE_TABLE, CURRENCY_MAP
 
 
 def usage():
@@ -30,7 +33,37 @@ def usage():
     print("-s 起始时间(格式YYYY-MM-DD)")
     print("-e 结束时间(格式YYYY-MM-DD)")
     print("-c 货币类型(参考currency_mapper中的对应名称或自行参考中国银行外汇牌价网站)")
+    print("-o [可选参数] 不填则为默认配置(PIPELINE -> MySQL)")
     print("-h 使用说明")
+
+
+def init_db():
+    """
+    初始化MySQL数据库
+    :return:
+    """
+    settings = get_project_settings()
+    try:
+        # 获取连接对象
+        conn = pymysql.connect(
+            host=settings['MYSQL_HOST'],
+            port=settings['MYSQL_PORT'],
+            user=settings['MYSQL_USER'],
+            password=settings['MYSQL_PWD'],
+            database=settings['MYSQL_DB_NAME'],
+            charset=settings['MYSQL_CHARSET']
+        )
+        with conn:
+            # 获取游标
+            cursor = conn.cursor()
+            # 输出SQL语句
+            using_sql = cursor.mogrify(query=CREATE_TABLE)
+            print("SQL: {}".format(using_sql))
+            # 执行SQL
+            cursor.execute(query=CREATE_TABLE)
+            conn.commit()
+    except Exception:
+        raise Exception("数据库初始化失败!请确认Scrapy数据库连接配置或数据库配置无误!")
 
 
 def parse_args(option_list: List[Tuple[str, str]]):
@@ -41,6 +74,8 @@ def parse_args(option_list: List[Tuple[str, str]]):
     start_time = ""
     end_time = ""
     currency_name = ""
+    # Scrapy配置
+    # settings = get_project_settings()
     for op, value in option_list:
         if op == "-s":
             start_time = value
@@ -48,9 +83,21 @@ def parse_args(option_list: List[Tuple[str, str]]):
             end_time = value
         elif op == "-c":
             currency_name = value
+        elif op == "-o":
+            if value == "MongoDB":
+                ITEM_PIPELINES.pop('BOC_FER_Spider.pipelines.BocFerSpiderMySQLPipeline')
+                ITEM_PIPELINES['BOC_FER_Spider.pipelines.BocFerSpiderMongoDBPipeline'] = 1
+            elif value == "MySQL":
+                ITEM_PIPELINES.clear()
+                ITEM_PIPELINES['BOC_FER_Spider.pipelines.BocFerSpiderMongoDBPipeline'] = 1
+            else:
+                print("管道配置使用默认配置选项!")
         elif op == "-h":
             usage()
             sys.exit()
+    # 创建数据库表
+    if "MySQL" in list(ITEM_PIPELINES.keys())[0]:
+        init_db()
     # 传递参数
     start_spider(start_time=start_time, end_time=end_time, currency_name=currency_name)
 
@@ -78,5 +125,5 @@ def start_spider(start_time: str, end_time: str, currency_name: str):
 
 
 if __name__ == '__main__':
-    opts, args = getopt.getopt(sys.argv[1:], "hs:e:c:")
+    opts, args = getopt.getopt(sys.argv[1:], "hs:e:c:o:")
     parse_args(option_list=opts)
