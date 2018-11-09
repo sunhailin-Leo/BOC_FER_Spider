@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 # Python内置库
+import os
+import csv
 import copy
 import uuid
 import logging
@@ -28,6 +30,7 @@ from BOC_FER_Spider.utils.enum_variable import INSERT_SQL
 logger = logging.getLogger(__name__)
 
 
+# MySQL数据管道
 class BocFerSpiderMySQLPipeline(object):
     """
     保存到数据库中对应的class
@@ -83,7 +86,17 @@ class BocFerSpiderMySQLPipeline(object):
     def _handle_error(self, failue, item, spider):
         print(failue)
 
+    def close_spider(self, spider):
+        """
+        关闭爬虫之后的方法
+        :param spider: 爬虫对象
+        :return: 无返回值
+        """
+        if spider.name == "BOC":
+            print("MySQL pipeline 关闭!")
 
+
+# MongoDB数据管道
 class BocFerSpiderMongoDBPipeline(object):
     def __init__(self):
         # MongoDB配置
@@ -122,15 +135,6 @@ class BocFerSpiderMongoDBPipeline(object):
             except ConnectionFailure:
                 logger.error("MongoDB服务未启动")
 
-    def close_spider(self, spider):
-        """
-        关闭爬虫之后的方法
-        :param spider: 爬虫对象
-        :return: 无返回值
-        """
-        if spider.name == "BOC":
-            self.client.close()
-
     def process_item(self, item, spider):
         """
         写入数据库中
@@ -146,3 +150,51 @@ class BocFerSpiderMongoDBPipeline(object):
             logger.error(err)
             # 结束爬虫
             spider.crawler.engine.close_spider(spider, "MongoDB insert error! Reason: {}".format(str(err)))
+
+    def close_spider(self, spider):
+        """
+        关闭爬虫之后的方法
+        :param spider: 爬虫对象
+        :return: 无返回值
+        """
+        if spider.name == "BOC":
+            self.client.close()
+
+
+class BocFerSpiderCSVPipeline(object):
+    def __init__(self):
+        # 获取存储路径
+        self._csv_file_path = '{}.csv'.format(settings.get('CSV_FILE_NAME')['FILE_NAME'])
+        # 判断csv是否存在决定是否添加表头
+        if os.path.exists(self._csv_file_path) is not True:
+            writer = csv.writer(open(self._csv_file_path, 'w', newline=''))
+            writer.writerow(settings.get('CSV_DEFAULT_HEADER'))
+
+    def process_item(self, item, spider):
+        """
+       写入CSV中
+       :param item: 数据条目
+       :param spider: 爬虫对象
+       :return: 返回显示item
+       """
+        if spider.name == "BOC":
+            with open(self._csv_file_path, 'a+', newline='') as f:
+                csv_file_writer = csv.writer(f)
+                csv_file_writer.writerow((
+                    item['currency_name'],
+                    item['buying_rate'],
+                    item['cash_buying_rate'],
+                    item['selling_rate'],
+                    item['cash_selling_rate'],
+                    item['boe_conversion_rate'],
+                    item['rate_time']
+                ))
+                return item
+
+    def close_spider(self, spider):
+        """
+        关闭爬虫调用的方法
+        :param spider: 爬虫名称
+        """
+        if spider.name == "BOC":
+            print("CSV pipeline 关闭!")

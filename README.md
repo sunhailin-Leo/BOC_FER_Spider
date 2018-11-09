@@ -32,7 +32,7 @@
 
 ```html
 例子: python cmdline_start_spider.py -s (起始日期YYYY-MM-DD) -e (结束日期YYYY-MM-DD) -c (货币名称) -o (可选参数:MySQL | MongoDB)
-使用范例: python cmdline_start_spider.py -s 2018-11-07 -e 2018-11-07 -c 港币 -o MySQL | MongoDB
+使用范例: python cmdline_start_spider.py -s 2018-11-07 -e 2018-11-07 -c 港币 -o MySQL | MongoDB | CSV
 ```
 或
 ```html
@@ -72,8 +72,14 @@ scrapy crawl BOC -a start_time={} -a end_time={} -a currency_name={} ({}需要�
 <h3 id="Future">未来开发方向</h3>
 
 ~~* 支持存储到MongoDB~~
-* 支持存储到csv或者excel中
+
+~~* 支持存储到csv或者excel中~~
+
+* 当日增量爬虫(可能需要借助Redis或者其他媒介进行爬虫状态存储)
+
 * 集成pyecharts做数据可视化(导出数据图表文件)
+
+* 支持将数据发到Kafka或者其他MQ中(实时计算的扩展) -- 考虑中...
 
 ---
 
@@ -88,4 +94,7 @@ scrapy crawl BOC -a start_time={} -a end_time={} -a currency_name={} ({}需要�
     * 增加MySQL建表初始化的代码
     * 支持MySQL和MongoDB的数据自定义存储(通过cmdline_start_spider的命令参数实现, scrapy crawl命令暂时没实现)
     * 移除currency_mapper文件, 将映射字典放到enum_variable中
+
+* 版本 - v1.2 - 2018-11-09:
+    * 增加CSV导出的支持(可以配置csv的文件名和存放路径)
     

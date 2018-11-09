@@ -29,6 +29,16 @@ MONGODB_PASS = ""
 MONGODB_DB_NAME = "db_exchange_rate"
 MONGODB_COL_NAME = "t_rate"
 
+# CSV配置
+# 注: 默认保存路径放到根目录下
+# 如果CSV文件名不为空则按定义的名称进行保存, 如果为空则格式为: export_货币名称_起始时间_结束时间.csv (时间都去掉"-"符号)
+CSV_FILE_NAME = {
+    "FILE_NAME": "",
+    "FILE_SUFFIX": ".csv"
+}
+# 最好不要修改
+CSV_DEFAULT_HEADER = ['货币名称', '现汇买入价', '现钞买入价', '现汇卖出价', '现钞卖出价', '中行折算价', '发布时间']
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS = 32
 
@@ -78,6 +88,7 @@ DEFAULT_REQUEST_HEADERS = {
 ITEM_PIPELINES = {
     'BOC_FER_Spider.pipelines.BocFerSpiderMySQLPipeline': 1,
     # 'BOC_FER_Spider.pipelines.BocFerSpiderMongoDBPipeline': 1
+    # 'BOC_FER_Spider.pipelines.BocFerSpiderCSVPipeline': 1
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

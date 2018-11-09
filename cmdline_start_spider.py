@@ -17,7 +17,7 @@ from scrapy.cmdline import execute
 from scrapy.utils.project import get_project_settings
 
 # 项目内部库
-from BOC_FER_Spider.settings import ITEM_PIPELINES
+from BOC_FER_Spider.settings import ITEM_PIPELINES, CSV_FILE_NAME
 from BOC_FER_Spider.utils.common_utils import time_format_validate
 from BOC_FER_Spider.utils.enum_variable import CREATE_TABLE, CURRENCY_MAP
 
@@ -33,7 +33,7 @@ def usage():
     print("-s 起始时间(格式YYYY-MM-DD)")
     print("-e 结束时间(格式YYYY-MM-DD)")
     print("-c 货币类型(参考currency_mapper中的对应名称或自行参考中国银行外汇牌价网站)")
-    print("-o [可选参数] 不填则为默认配置(PIPELINE -> MySQL)")
+    print("-o [可选参数] 不填则为默认配置(PIPELINE -> MySQL) 可选参数有: MySQL MongoDB CSV")
     print("-h 使用说明")
 
 
@@ -85,11 +85,18 @@ def parse_args(option_list: List[Tuple[str, str]]):
             currency_name = value
         elif op == "-o":
             if value == "MongoDB":
-                ITEM_PIPELINES.pop('BOC_FER_Spider.pipelines.BocFerSpiderMySQLPipeline')
+                ITEM_PIPELINES.clear()
                 ITEM_PIPELINES['BOC_FER_Spider.pipelines.BocFerSpiderMongoDBPipeline'] = 1
             elif value == "MySQL":
                 ITEM_PIPELINES.clear()
                 ITEM_PIPELINES['BOC_FER_Spider.pipelines.BocFerSpiderMongoDBPipeline'] = 1
+            elif value == "CSV":
+                ITEM_PIPELINES.clear()
+                ITEM_PIPELINES['BOC_FER_Spider.pipelines.BocFerSpiderCSVPipeline'] = 1
+                if CSV_FILE_NAME['FILE_NAME'] == "":
+                    CSV_FILE_NAME['FILE_NAME'] = "export_{}_{}_{}".format(currency_name,
+                                                                          start_time.replace("-", ""),
+                                                                          end_time.replace("-", ""))
             else:
                 print("管道配置使用默认配置选项!")
         elif op == "-h":
