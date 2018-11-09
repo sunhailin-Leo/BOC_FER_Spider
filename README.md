@@ -31,7 +31,7 @@
 * 启动简介
 
 ```html
-例子: python cmdline_start_spider.py -s (起始日期YYYY-MM-DD) -e (结束日期YYYY-MM-DD) -c (货币名称) -o (可选参数:MySQL | MongoDB)
+例子: python cmdline_start_spider.py -s (起始日期YYYY-MM-DD) -e (结束日期YYYY-MM-DD) -c (货币名称) -o (可选参数:MySQL | MongoDB | CSV)
 使用范例: python cmdline_start_spider.py -s 2018-11-07 -e 2018-11-07 -c 港币 -o MySQL | MongoDB | CSV
 ```
 或
