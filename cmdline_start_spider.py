@@ -89,7 +89,7 @@ def parse_args(option_list: List[Tuple[str, str]]):
                 ITEM_PIPELINES['BOC_FER_Spider.pipelines.BocFerSpiderMongoDBPipeline'] = 1
             elif value == "MySQL":
                 ITEM_PIPELINES.clear()
-                ITEM_PIPELINES['BOC_FER_Spider.pipelines.BocFerSpiderMongoDBPipeline'] = 1
+                ITEM_PIPELINES['BOC_FER_Spider.pipelines.BocFerSpiderMySQLPipeline'] = 1
             elif value == "CSV":
                 ITEM_PIPELINES.clear()
                 ITEM_PIPELINES['BOC_FER_Spider.pipelines.BocFerSpiderCSVPipeline'] = 1
