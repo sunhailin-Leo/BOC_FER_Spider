@@ -52,7 +52,7 @@ class BocFerSpiderMySQLPipeline(object):
             host=settings['MYSQL_HOST'],
             db=settings['MYSQL_DBNAME'],
             user=settings['MYSQL_USER'],
-            passwd=settings['MYSQL_PASSWD'],
+            passwd=settings['MYSQL_PWD'],
             charset='utf8',  # 编码要加上，否则可能出现中文乱码问题
             cursorclass=cursors.DictCursor,
             use_unicode=False,

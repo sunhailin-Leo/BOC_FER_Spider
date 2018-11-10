@@ -18,7 +18,7 @@ def get_total_page(start_time: str, end_time: str, currency_name: str) -> str:
     """
     option = webdriver.ChromeOptions()
     option.add_argument('headless')
-    browser = webdriver.Chrome(options=option)
+    browser = webdriver.Chrome(executable_path="./chrome_driver/chromedriver2-35.exe", options=option)
     browser.get(URL)
     time.sleep(2)
 

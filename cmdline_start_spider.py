@@ -75,7 +75,6 @@ def parse_args(option_list: List[Tuple[str, str]]):
     end_time = ""
     currency_name = ""
     # Scrapy配置
-    # settings = get_project_settings()
     for op, value in option_list:
         if op == "-s":
             start_time = value
