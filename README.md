@@ -22,24 +22,29 @@
     * 在网络状况比较好的情况下爬取了 --> 美元(从2008年1月1日到2018年11月9日的数据) --> 用时2小时左右 (Scrapy 结果如下)
 
 ```html
-{'downloader/request_bytes': 7401794,
- 'downloader/request_count': 12650,
- 'downloader/request_method_count/POST': 12650,
- 'downloader/response_bytes': 51434715,
- 'downloader/response_count': 12650,
- 'downloader/response_status_count/200': 12650,
- 'finish_reason': 'finished',
- 'finish_time': datetime.datetime(2018, 11, 10, 16, 55, 39, 672728),
- 'item_scraped_count': 252989,
- 'log_count/DEBUG': 265676,
- 'log_count/INFO': 12732,
- 'request_depth_max': 12649,
- 'response_received_count': 12650,
- 'scheduler/dequeued': 12650,
- 'scheduler/dequeued/memory': 12650,
- 'scheduler/enqueued': 12650,
- 'scheduler/enqueued/memory': 12650,
- 'start_time': datetime.datetime(2018, 11, 10, 15, 42, 14, 987197)}
+# 爬取命令: python36 cmdline_start_spider.py -s 2008-01-01 -e 2018-11-09 -c 美元 -o MySQL
+
+# 爬取结果:
+{
+    'downloader/request_bytes': 7401794,
+    'downloader/request_count': 12650,
+    'downloader/request_method_count/POST': 12650,
+    'downloader/response_bytes': 51434715,
+    'downloader/response_count': 12650,
+    'downloader/response_status_count/200': 12650,
+    'finish_reason': 'finished',
+    'finish_time': datetime.datetime(2018, 11, 10, 16, 55, 39, 672728),
+    'item_scraped_count': 252989,
+    'log_count/DEBUG': 265676,
+    'log_count/INFO': 12732,
+    'request_depth_max': 12649,
+    'response_received_count': 12650,
+    'scheduler/dequeued': 12650,
+    'scheduler/dequeued/memory': 12650,
+    'scheduler/enqueued': 12650,
+    'scheduler/enqueued/memory': 12650,
+    'start_time': datetime.datetime(2018, 11, 10, 15, 42, 14, 987197)
+}
 ```
 
 ---
