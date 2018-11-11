@@ -18,6 +18,30 @@
 * Python版本: Python 3.6
 * 编译器: Pycharm
 
+* 性能测试:
+    * 在网络状况比较好的情况下爬取了 --> 美元(从2008年1月1日到2018年11月9日的数据) --> 用时2小时左右 (Scrapy 结果如下)
+
+```html
+{'downloader/request_bytes': 7401794,
+ 'downloader/request_count': 12650,
+ 'downloader/request_method_count/POST': 12650,
+ 'downloader/response_bytes': 51434715,
+ 'downloader/response_count': 12650,
+ 'downloader/response_status_count/200': 12650,
+ 'finish_reason': 'finished',
+ 'finish_time': datetime.datetime(2018, 11, 10, 16, 55, 39, 672728),
+ 'item_scraped_count': 252989,
+ 'log_count/DEBUG': 265676,
+ 'log_count/INFO': 12732,
+ 'request_depth_max': 12649,
+ 'response_received_count': 12650,
+ 'scheduler/dequeued': 12650,
+ 'scheduler/dequeued/memory': 12650,
+ 'scheduler/enqueued': 12650,
+ 'scheduler/enqueued/memory': 12650,
+ 'start_time': datetime.datetime(2018, 11, 10, 15, 42, 14, 987197)}
+```
+
 ---
 
 <h3 id="ProjectInfo">项目简介</h3>
@@ -101,4 +125,8 @@ scrapy crawl BOC -a start_time={} -a end_time={} -a currency_name={} ({}需要�
 * 版本 - v1.3 - 2018-11-10:
     * 修复了多处细节错误
     * 增加了chrome driver在项目目录中
+    
+* 版本 - v1.3.1 - 2018-11-11:
+    * 双十一也不休息更新更新代码
+    * 更新了文档(加入一个长时间爬取的测试结果)
     
