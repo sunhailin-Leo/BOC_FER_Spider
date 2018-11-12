@@ -167,6 +167,7 @@ class BocFerSpiderMongoDBPipeline(object):
             self.client.close()
 
 
+# CSV数据管道
 class BocFerSpiderCSVPipeline(object):
     def __init__(self):
         # 获取存储路径

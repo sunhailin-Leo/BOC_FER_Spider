@@ -56,8 +56,3 @@ def get_total_page(start_time: str, end_time: str, currency_name: str) -> str:
 
     # 返回执行结果
     return page_context['PageCount']
-
-
-# if __name__ == '__main__':
-#     res = get_total_page(start_time="2018-11-06", end_time="2018-11-06", currency_name="港币")
-#     print(res)

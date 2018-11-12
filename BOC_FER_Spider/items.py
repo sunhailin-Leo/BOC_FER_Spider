@@ -13,4 +13,3 @@ class BocFerSpiderItem(scrapy.Item):
 
     def __setitem__(self, key, value):
         self.exchange[key] = value
-
