@@ -57,11 +57,15 @@ CREATE_TABLE = "CREATE TABLE IF NOT EXISTS {}.{} (" \
                "selling_rate varchar(255) DEFAULT NULL, " \
                "cash_selling_rate varchar(255) DEFAULT NULL, " \
                "boe_conversion_rate varchar(255) DEFAULT NULL, " \
-               "rate_time varchar(255) NOT NULL" \
+               "rate_time varchar(255) NOT NULL," \
+               "md5_str varchar(255) NOT NULL," \
+               "UNIQUE KEY `unique_md5_str` (`md5_str`)" \
                ") ENGINE=InnoDB DEFAULT CHARSET=utf8;".format(MYSQL_DB_NAME, MYSQL_TABLE_NAME)
 
 # 插入语句
 INSERT_SQL = \
     "INSERT INTO {}.{} " \
-    "(currency_name, buying_rate, cash_buying_rate, selling_rate, cash_selling_rate, boe_conversion_rate, rate_time) " \
-    "VALUES (%s, %s, %s, %s, %s, %s, %s)".format(MYSQL_DB_NAME, MYSQL_TABLE_NAME)
+    "(currency_name, buying_rate, cash_buying_rate, " \
+    "selling_rate, cash_selling_rate, boe_conversion_rate, " \
+    "rate_time, md5_str) " \
+    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)".format(MYSQL_DB_NAME, MYSQL_TABLE_NAME)

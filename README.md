@@ -56,12 +56,14 @@
         * 爬虫地址：[网址](http://srh.bankofchina.com/search/whpj/search.jsp)
     2. 获取时间可以自定义(设置起始时间不建议跨度太长)
     3. 通过cmdline_start_spider支持自定义存储路径(MySQL,MongoDB,CSV)
+    4. 增加增量爬取模式(定时爬取第一页, 时间间隔为秒, 在settings.py中配置)
 
 * 启动简介
 
 ```html
-例子: python cmdline_start_spider.py -s (起始日期YYYY-MM-DD) -e (结束日期YYYY-MM-DD) -c (货币名称) -o (可选参数:MySQL | MongoDB | CSV)
-使用范例: python cmdline_start_spider.py -s 2018-11-07 -e 2018-11-07 -c 港币 -o MySQL | MongoDB | CSV
+例子: python cmdline_start_spider.py -s (起始日期YYYY-MM-DD) -e (结束日期YYYY-MM-DD) -c (货币名称) -o (可选参数:MySQL | MongoDB | CSV) -i(可选,无参数加上-i则使用增量模式)
+全量爬虫使用范例: python cmdline_start_spider.py -s 2018-11-07 -e 2018-11-07 -c 港币 -o MySQL | MongoDB | CSV
+增量爬虫使用范例: python cmdline_start_spider.py -s 2018-11-07 -e 2018-11-07 -c 港币 -o MySQL | MongoDB | CSV -i
 ```
 或
 ```html
@@ -104,7 +106,7 @@ scrapy crawl BOC -a start_time={} -a end_time={} -a currency_name={} ({}需要�
 
 ~~* 支持存储到csv或者excel中~~
 
-* 当日增量爬虫(可能需要借助Redis或者其他媒介进行爬虫状态存储)
+~~* 当日增量爬虫(可能需要借助Redis或者其他媒介进行爬虫状态存储)~~
 
 * 集成pyecharts做数据可视化(导出数据图表文件)
 
@@ -134,4 +136,9 @@ scrapy crawl BOC -a start_time={} -a end_time={} -a currency_name={} ({}需要�
 * 版本 - v1.3.1 - 2018-11-11:
     * 双十一也不休息更新更新代码
     * 更新了文档(加入一个长时间爬取的测试结果)
-    
+
+* 版本 - v1.4 - 2018-11-12:
+    * MySQL和MongoDB pipeline中新增一个字段md5_str并设置索引,去除由网页数据重复而导致数据库中出现重复数据(CSV的pipeline暂时无法进行去重)
+    * 新增建表是的唯一索引创建
+    * 增加增量爬虫模式, 新增启动参数 -i (有 -i 则为增量, 无则为全量)
+    * 增加增量爬虫时间间隔参数(在settings.py中) INCREMENTAL_CRAWLER_TIME 默认为10秒

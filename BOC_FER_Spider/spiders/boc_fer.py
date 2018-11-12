@@ -5,12 +5,14 @@ Created on 2018年11月7日
 """
 # Python内置库
 import time
+import hashlib
 from collections import OrderedDict
 
 # Scrapy
 import scrapy
 
 # 项目内部库
+from BOC_FER_Spider.settings import INCREMENTAL_CRAWLER_TIME
 from BOC_FER_Spider.utils.get_total_page import get_total_page
 from BOC_FER_Spider.utils.enum_variable import URL, CURRENCY_MAP
 
@@ -22,16 +24,19 @@ class BOCFERScrapySpider(scrapy.Spider):
     def __init__(self,
                  start_time: str,
                  end_time: str,
-                 currency_name: str):
+                 currency_name: str,
+                 incremental: int = 0):
         """
         中国银行外汇牌价查询爬虫
         :param start_time: 起始时间
         :param end_time: 结束时间
         :param currency_name: 货币类型
+        :param incremental: 增量参数 默认为False
         """
         self._start_time = start_time
         self._end_time = end_time
         self._currency_name = currency_name
+        self._incremental = int(incremental)
 
         # 启动的URL
         self.start_urls = [URL]
@@ -72,21 +77,35 @@ class BOCFERScrapySpider(scrapy.Spider):
             exchange_data['rate_time'] = \
                 time.strftime("%Y-%m-%d %H:%M:%S",
                               time.strptime(exchange.xpath('string(td[7])').extract_first(), "%Y.%m.%d %H:%M:%S"))
-            # print(exchange_data)
+            exchange_data['md5_str'] = \
+                str(hashlib.md5(
+                    (exchange_data['rate_time'] + exchange_data['selling_rate']).encode('UTF-8')
+                ).hexdigest()).upper()
             yield exchange_data
         # 获取meta的结果
         post_data = response.meta['post_data']
         total_page = response.meta['tp']
-        # 判断是否翻页
-        next_page_num = int(post_data['page']) + 1
-        if next_page_num <= total_page:
-            post_data['page'] = str(next_page_num)
-            self.logger.info("开始下一页! 下一页为第 {} 页, 总共 {} 页!".format(next_page_num, total_page))
+        # 判断是否为增量爬虫
+        if self._incremental == 1:
+            self.logger.info("增量爬取中!间隔时间为{}秒".format(str(INCREMENTAL_CRAWLER_TIME)))
             yield scrapy.FormRequest(url=self.start_urls[0],
                                      method="POST",
                                      formdata=post_data,
                                      meta={'tp': total_page, 'post_data': post_data},
                                      dont_filter=True,
                                      callback=self.parse)
+            time.sleep(INCREMENTAL_CRAWLER_TIME)
         else:
-            self.logger.info("爬取完毕!")
+            # 判断是否翻页
+            next_page_num = int(post_data['page']) + 1
+            if next_page_num <= total_page:
+                post_data['page'] = str(next_page_num)
+                self.logger.info("开始下一页! 下一页为第 {} 页, 总共 {} 页!".format(next_page_num, total_page))
+                yield scrapy.FormRequest(url=self.start_urls[0],
+                                         method="POST",
+                                         formdata=post_data,
+                                         meta={'tp': total_page, 'post_data': post_data},
+                                         dont_filter=True,
+                                         callback=self.parse)
+            else:
+                self.logger.info("爬取完毕!")

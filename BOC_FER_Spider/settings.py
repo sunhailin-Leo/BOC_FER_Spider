@@ -12,13 +12,16 @@ USER_AGENT = \
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
+# 增量爬虫间隔配置
+INCREMENTAL_CRAWLER_TIME = 10
+
 # MySQL配置
 MYSQL_HOST = "127.0.0.1"
 MYSQL_PORT = 3306
 MYSQL_USER = "root"
 MYSQL_PWD = ""
 MYSQL_DB_NAME = "exchange_rate"
-MYSQL_TABLE_NAME = "t_exchange_rate_1"
+MYSQL_TABLE_NAME = "t_exchange_rate"
 MYSQL_CHARSET = "utf8"
 
 # MONGODB配置

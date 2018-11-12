@@ -79,8 +79,12 @@ class BocFerSpiderMySQLPipeline(object):
                    item['selling_rate'],
                    item['cash_selling_rate'],
                    item['boe_conversion_rate'],
-                   item['rate_time'])
-        tx.execute(INSERT_SQL, params)
+                   item['rate_time'],
+                   item['md5_str'])
+        try:
+            tx.execute(INSERT_SQL, params)
+        except pymysql.err.IntegrityError:
+            pass
 
     # 错误处理方法
     def _handle_error(self, failue, item, spider):
@@ -132,6 +136,8 @@ class BocFerSpiderMongoDBPipeline(object):
                 self.client.admin.command('ismaster')
                 self.db = self.client[self._db_name]
                 self.collection = self.db[self._col_name]
+                # 创建唯一索引
+                self.collection.ensure_index('md5_str', unique=True)
             except ConnectionFailure:
                 logger.error("MongoDB服务未启动")
 

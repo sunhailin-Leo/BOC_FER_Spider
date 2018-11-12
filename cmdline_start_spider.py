@@ -34,6 +34,7 @@ def usage():
     print("-e 结束时间(格式YYYY-MM-DD)")
     print("-c 货币类型(参考currency_mapper中的对应名称或自行参考中国银行外汇牌价网站)")
     print("-o [可选参数] 不填则为默认配置(PIPELINE -> MySQL) 可选参数有: MySQL MongoDB CSV")
+    print("-i [可选参数] 存在-i参数则为增量模式(只爬取第一页), 不存在则为全量")
     print("-h 使用说明")
 
 
@@ -74,6 +75,7 @@ def parse_args(option_list: List[Tuple[str, str]]):
     start_time = ""
     end_time = ""
     currency_name = ""
+    incremental = 0
     # Scrapy配置
     for op, value in option_list:
         if op == "-s":
@@ -98,6 +100,9 @@ def parse_args(option_list: List[Tuple[str, str]]):
                                                                           end_time.replace("-", ""))
             else:
                 print("管道配置使用默认配置选项!")
+        elif op == "-i":
+            print("开启增量模式!")
+            incremental = 1
         elif op == "-h":
             usage()
             sys.exit()
@@ -105,15 +110,17 @@ def parse_args(option_list: List[Tuple[str, str]]):
     if "MySQL" in list(ITEM_PIPELINES.keys())[0]:
         init_db()
     # 传递参数
-    start_spider(start_time=start_time, end_time=end_time, currency_name=currency_name)
+    start_spider(start_time=start_time, end_time=end_time,
+                 currency_name=currency_name, incremental=incremental)
 
 
-def start_spider(start_time: str, end_time: str, currency_name: str):
+def start_spider(start_time: str, end_time: str, currency_name: str, incremental: int):
     """
     用scrapy.cmdline命令启动Scrapy
     :param start_time: 起始时间
     :param end_time: 结束时间
     :param currency_name: 货币类型
+    :param incremental: 增量爬取
     """
     assert time_format_validate(time_str=start_time) is not True, "起始日期格式出错!请检查日期格式!"
     assert time_format_validate(time_str=end_time) is not True, "起始日期格式出错!请检查日期格式!"
@@ -127,9 +134,10 @@ def start_spider(start_time: str, end_time: str, currency_name: str):
     execute(["scrapy", "crawl", "BOC",
              "-a", "start_time={}".format(start_time),
              "-a", "end_time={}".format(end_time),
-             "-a", "currency_name={}".format(currency_name)])
+             "-a", "currency_name={}".format(currency_name),
+             "-a", "incremental={}".format(incremental)])
 
 
 if __name__ == '__main__':
-    opts, args = getopt.getopt(sys.argv[1:], "hs:e:c:o:")
+    opts, args = getopt.getopt(sys.argv[1:], "hs:e:c:o:i")
     parse_args(option_list=opts)
